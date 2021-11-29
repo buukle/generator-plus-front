@@ -445,7 +445,7 @@ export default {
           ],
         templatesGroupName: [
             { required: true, message: '请输入模板分组' },
-            { max: 16, message: '请输入模板分组' }
+            { max: 50, message: '请输入模板分组' }
           ]
         },
       commonRequest: {
