@@ -107,7 +107,7 @@ export default {
       this.$refs.table.refresh(true)
     },
     handleAdd () {
-      this.initvalue = null
+      this.initvalue = {}
       this.$refs.AddOrEditForm.show()
     },
     handleDelete (id) {
@@ -152,6 +152,9 @@ export default {
       }).then(res => {
         if (res.head.status === 'S') {
           this.initvalue = res.body
+          if(res.body.paramList == null){
+            this.initvalue.paramList = []
+          }
           this.$refs.AddOrEditForm.show()
         } else {
           message.error(res.head.msg)

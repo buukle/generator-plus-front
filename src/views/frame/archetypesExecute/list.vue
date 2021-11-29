@@ -105,7 +105,7 @@ export default {
       this.$refs.table.refresh(true)
     },
     handleAdd () {
-      this.initvalue = null
+      this.initvalue = {}
       this.$refs.AddOrEditForm.show()
     },
     handleDelete (id) {

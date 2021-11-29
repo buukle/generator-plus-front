@@ -27,16 +27,54 @@ div .line-border{
         >
           <a-input v-model="form.id" />
         </a-form-model-item>
+        <!-- 名称  -->
+        <a-form-model-item
+          label="名称"
+          prop="name"
+          :label-col="formItemLayout.labelCol"
+          :wrapper-col="formItemLayout.wrapperCol"
+        >
+          <a-input v-model="form.name" placeholder="请输入名称" />
+        </a-form-model-item>
 
-          <!-- 名称  -->
-          <a-form-model-item
-            label="名称"
-            prop="name"
-            :label-col="formItemLayout.labelCol"
-            :wrapper-col="formItemLayout.wrapperCol"
+        <a-form-model-item
+          label="自定义分组变量"
+          prop="paramList"
+          :label-col="formItemLayout.labelCol"
+          :wrapper-col="formItemLayout.wrapperCol"
+        >
+          <a-form-item
+            v-for="(k, index) in form.paramList"
+            :key="index"
+            v-bind="formItemLayout"
+            :required="false"
           >
-            <a-input v-model="form.name" placeholder="请输入名称" />
-          </a-form-model-item>
+            (<span v-html="index + 1"></span>)
+            <a-input
+              addon-before="变量名"
+              v-model="k.name"
+              placeholder="name"
+              style="width: 30%; margin-right: 8px"
+            />
+            <a-input
+              addon-before="变量值"
+              v-model="k.value"
+              placeholder="value"
+              style="width: 30%; margin-right: 8px"
+            />
+            <a-icon
+              v-if="form.paramList.length > 0"
+              class="dynamic-delete-button"
+              type="minus-circle-o"
+              @click="() => remove(k)"
+            />
+          </a-form-item>
+          <a-form-item v-bind="formItemLayout">
+            <a-button type="dashed" style="width: 60%" @click="add">
+              <a-icon type="plus" /> 添加分组变量
+            </a-button>
+          </a-form-item>
+        </a-form-model-item>
       </a-form-model>
     </div>
     <template slot="footer">
@@ -53,6 +91,7 @@ import clone from 'clone'
 import request from '@/utils/request'
 import { message } from 'ant-design-vue'
 
+// eslint-disable-next-line no-unused-vars
 const formItemLayout = {
   labelCol: { span: 3 },
   wrapperCol: { span: 21 }
@@ -87,6 +126,17 @@ export default {
     }
   },
   methods: {
+    remove (k) {
+      var length = this.form.paramList.length
+      for (var i = 0; i < length; i++) {
+        if (this.form.paramList[i] == k) {
+          this.form.paramList.splice(i, 1)
+        }
+      }
+    },
+    add () {
+      this.form.paramList.push({ 'name': '', 'value': '' })
+    },
     getTitle (initvalue) {
       if (initvalue) {
         return <span> 编辑 </span>
@@ -105,38 +155,61 @@ export default {
     handleEdit () {
       this.$refs.form.validate((bool) => {
         if (bool) {
-          // 深拷贝,以避开提交时改变源数据
-          var data = JSON.parse(JSON.stringify(this.form))
-          this.commonRequest.head.operationTime = Date.now()
-          this.commonRequest.body = data
-          const commonRequest = this.commonRequest
-          request({
-            url: '/templatesGroup/addOrEdit',
-            method: 'post',
-            dataType: 'json',
-            data: commonRequest
-          }).then(res => {
-            if (res.head.status === 'S') {
-              message.success(res.head.msg)
-              this.handleClose()
-              this.$emit('refresh')
-            } else {
-              message.error(res.head.msg)
+          var validate = true
+          for (var i = 0; i < this.form.paramList.length; i++) {
+            if (this.form.paramList[i].name === '') {
+              message.error('请填写 [自定义分组变量] 第' + (i + 1) + '行 "变量名"')
+              validate = false
             }
-          }).catch((err) => {
-            console.log(err)
-          })
+            if (this.form.paramList[i].value === '') {
+              message.error('请填写 [自定义分组变量] 第' + (i + 1) + '行 "变量值"')
+              validate = false
+            }
+          }
+          if (validate) {
+            // 深拷贝,以避开提交时改变源数据
+            var data = JSON.parse(JSON.stringify(this.form))
+            this.commonRequest.head.operationTime = Date.now()
+            this.commonRequest.body = data
+            const commonRequest = this.commonRequest
+            request({
+              url: '/templatesGroup/addOrEdit',
+              method: 'post',
+              dataType: 'json',
+              data: commonRequest
+            }).then(res => {
+              if (res.head.status === 'S') {
+                message.success(res.head.msg)
+                this.handleClose()
+                this.$emit('refresh')
+              } else {
+                message.error(res.head.msg)
+              }
+            }).catch((err) => {
+              console.log(err)
+            })
+          }
         }
       })
     }
   },
   data () {
     return {
+      formItemLayout: {
+        labelCol: {
+          xs: { span: 24 },
+          sm: { span: 4 }
+        },
+        wrapperCol: {
+          xs: { span: 24 },
+          sm: { span: 20 }
+        }
+      },
       visible: false,
       formLayout: 'horizontal',
-      formItemLayout,
       datasourcesList: [],
       form: {
+       paramList: [],
        id: null,
        auditId: null,
        applicationCode: null,
@@ -160,6 +233,7 @@ export default {
         end: ''
       },
       initForm: {
+       paramList: [],
        id: null,
        auditId: null,
        applicationCode: null,

@@ -35,6 +35,17 @@
               {{ templatesGroup.name ? templatesGroup.name : templatesGroup.id + 1 }}
             </a-select-option>
           </a-select>
+          <a-popover title="模板分组变量列表">
+            <template slot="content">
+              <a-table :columns="columnsGroupParam" :pagination="false" :data-source="form.templatesGroupParamList" bordered>
+                <template slot="name" slot-scope="text">
+                  <a>{{ text }}</a>
+                </template>
+              </a-table>
+            </template>
+            <span>模板分组变量列表</span>
+            <a-icon type="question-circle" />
+          </a-popover>
         </a-form-model-item>
         <a-form-model-item
           label="模板名称"
@@ -151,7 +162,7 @@
           :label-col="formItemLayout.labelCol"
           :wrapper-col="formItemLayout.wrapperCol"
         >
-          <a-popover title="支持的变量列表">
+          <a-popover title="全局变量列表">
             <template slot="content">
               <a-table :columns="columns" :pagination="false" :data-source="data" bordered>
                 <template slot="name" slot-scope="text">
@@ -159,7 +170,7 @@
                 </template>
               </a-table>
             </template>
-            <span>内置支持的变量列表</span>
+            <span>全局变量列表</span>
             <a-icon type="question-circle" />
           </a-popover>
           <a-textarea
@@ -211,6 +222,17 @@ const columns = [
   {
     title: '内容',
     dataIndex: 'mean'
+  }
+]
+const columnsGroupParam = [
+  {
+    title: '变量',
+    dataIndex: 'name',
+    scopedSlots: { customRender: 'name' }
+  },
+  {
+    title: '内容',
+    dataIndex: 'value'
   }
 ]
 const data = [
@@ -266,6 +288,23 @@ export default {
   methods: {
     templatesGroupChange (value, e) {
       this.form.templatesGroupId = e.data.key
+      this.bodyById.id = e.data.key
+      this.commonRequest.body = this.bodyById
+      const commonRequest = this.commonRequest
+      request({
+        url: '/templatesGroup/getById',
+        method: 'post',
+        dataType: 'json',
+        data: commonRequest
+      }).then(res => {
+        if (res.head.status === 'S') {
+          this.form.templatesGroupParamList = res.body.paramList
+        } else {
+          message.error(res.head.msg)
+        }
+      }).catch((err) => {
+        console.log(err)
+      })
     },
     getTemplatesGroupList () {
       const commonRequest = this.commonRequest
@@ -337,6 +376,7 @@ export default {
     return {
       data,
       columns,
+      columnsGroupParam,
       visible: false,
       suffix: '',
       formLayout: 'horizontal',
@@ -346,6 +386,7 @@ export default {
         id: null,
         templatesGroupId: '',
         templatesGroupName: '',
+        templatesGroupParamList: '',
         name: '',
         path: '',
         openTablePath: '',
@@ -360,6 +401,7 @@ export default {
         id: null,
         templatesGroupId: '',
         templatesGroupName: '',
+        templatesGroupParamList: '',
         name: '',
         path: '',
         openTablePath: '',
@@ -411,6 +453,9 @@ export default {
           operationTime: Date.now()
         },
         body: {}
+      },
+      bodyById: {
+        id: 0
       }
       }
   }

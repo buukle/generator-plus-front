@@ -78,6 +78,23 @@ div .line-border{
 
         <span style="font-size: 15px; font-weight: 1000; color: #827f7f;"> 生成配置 </span>
         <div class="line-border">
+          <!-- 模板分组  -->
+          <a-form-model-item
+            label="模板分组"
+            prop="templatesGroupName"
+            :label-col="formItemLayout.labelCol"
+            :wrapper-col="formItemLayout.wrapperCol"
+          >
+            <a-select
+              v-model="form.templatesGroupName"
+              placeholder="请选择模板分组"
+              @change="templatesGroupChange"
+            >
+              <a-select-option v-for="templatesGroup in templatesGroupList" :key="templatesGroup.id" :value="templatesGroup.name ? templatesGroup.name : templatesGroup.id + 1" :title="templatesGroup.name">
+                {{ templatesGroup.name ? templatesGroup.name : templatesGroup.id + 1 }}
+              </a-select-option>
+            </a-select>
+          </a-form-model-item>
           <!-- 选择模板  -->
           <a-form-model-item
             label="选择模板"
@@ -185,6 +202,47 @@ export default {
     }
   },
   methods: {
+    templatesGroupChange (value, e) {
+      // 加载模板分组的模板
+      const commonRequest = this.commonRequest
+      this.form.templatesGroupId = e.data.key
+      this.bodyByGroupId.templatesGroupId = e.data.key
+      commonRequest.body = this.bodyByGroupId
+      request({
+        url: '/templates/getTemplatesByGroupId',
+        method: 'post',
+        dataType: 'json',
+        data: commonRequest
+      }).then(res => {
+        if (res.head.status === 'S') {
+          this.form.templatesList = res.body
+          this.form.templateIds = []
+        } else {
+          this.form.templatesList = {}
+          this.form.templateIds = []
+          message.error(res.head.msg)
+        }
+      }).catch((err) => {
+        console.log(err)
+      })
+    },
+    getTemplatesGroupList () {
+      const commonRequest = this.commonRequest
+      request({
+        url: '/templatesGroup/getTemplatesGroupList',
+        method: 'post',
+        dataType: 'json',
+        data: commonRequest
+      }).then(res => {
+        if (res.head.status === 'S') {
+          this.templatesGroupList = res.body
+        } else {
+          message.error(res.head.msg)
+        }
+      }).catch((err) => {
+        console.log(err)
+      })
+    },
     datasourcesChange (value, e) {
       // 加载数据源的表
       const commonRequest = this.commonRequest
@@ -236,6 +294,7 @@ export default {
     show () {
       this.visible = true
       this.getDatasourcesList()
+      this.getTemplatesGroupList()
     },
     handleClose () {
       this.form = clone(this.initForm)
@@ -278,6 +337,7 @@ export default {
       formLayout: 'horizontal',
       formItemLayout,
       datasourcesList: [],
+      templatesGroupList: [],
       form: {
         id: null,
         name: '',
@@ -286,6 +346,8 @@ export default {
         tables: [],
         templateIds: [],
         tableList: {},
+        templatesGroupId: '',
+        templatesGroupName: '',
         templatesList: {},
         basePackage: '',
         dirLocation: '',
@@ -298,6 +360,8 @@ export default {
         datasourcesId: '',
         datasourcesName: '',
         tables: [],
+        templatesGroupId: '',
+        templatesGroupName: '',
         templateIds: [],
         tableList: {},
         templatesList: {},
@@ -318,11 +382,14 @@ export default {
         datasourcesName: [
             { required: true, message: '请选择' }
           ],
+        templatesGroupName: [
+            { required: true, message: '请选择' }
+          ],
         tables: [
             { required: true, message: '请选择表名(选择前请先选择正确的连接)' }
           ],
         templateIds: [
-            { required: true, message: '请选择模板' }
+            { required: true, message: '请选择模板(选择前请先选择正确的模板分组)' }
           ],
         dirLocation: [
             { required: true, message: '请输入脚本' }
@@ -336,6 +403,9 @@ export default {
         },
         bodyById: {
           id: 0
+        },
+        bodyByGroupId: {
+          templatesGroupId: 0
         }
       }
   }

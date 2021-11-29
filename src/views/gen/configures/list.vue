@@ -145,7 +145,7 @@ export default {
       this.$refs.table.refresh(true)
     },
     handleAdd () {
-      this.initvalue = null
+      this.initvalue = {}
       this.commonRequest.head.operationTime = Date.now()
       this.commonRequest.body = null
       const commonRequest = this.commonRequest

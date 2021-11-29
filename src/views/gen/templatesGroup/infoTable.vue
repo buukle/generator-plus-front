@@ -56,6 +56,15 @@
                 <span> {{ gmtDateFormat(initvalue.gmtModified) }} </span>
               </a-col>
             </a-col>
+            <!-- 自定义变量 -->
+            <a-col :span="24" style="margin-top: 5px">
+              <a-col :span="3" align="right">
+                <span>自定义变量:</span>
+              </a-col>
+              <a-col :span="21" style="padding-left: 10px;">
+                <span> {{ initvalue.paramList }} </span>
+              </a-col>
+            </a-col>
             <!-- 备注 -->
             <a-col :span="24" style="margin-top: 5px">
               <a-col :span="3" align="right">
@@ -112,3 +121,8 @@ export default {
   }
 }
 </script>
+<style>
+.params {
+  margin-left: 5px;
+}
+</style>
