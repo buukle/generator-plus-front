@@ -75,6 +75,58 @@ div .line-border{
             </a-button>
           </a-form-item>
         </a-form-model-item>
+
+        <!-- 工程路径替换  -->
+        <a-form-model-item
+          label="原工程路径子串(1)"
+          prop="pathToReplace"
+          :label-col="formItemLayout.labelCol"
+          :wrapper-col="formItemLayout.wrapperCol"
+        >
+          <a-input v-model="form.pathToReplace1" placeholder="请输入工程路径将被替换的字符串" />
+        </a-form-model-item>
+        <a-form-model-item
+          label="替换后工程路径子串(1)"
+          prop="pathReplaced"
+          :label-col="formItemLayout.labelCol"
+          :wrapper-col="formItemLayout.wrapperCol"
+        >
+          <a-input v-model="form.pathReplaced1" placeholder="请输入工程路径替换后的字符串" />
+        </a-form-model-item>
+        <!-- 工程路径替换  -->
+        <a-form-model-item
+          label="原工程路径子串(2)"
+          prop="pathToReplace"
+          :label-col="formItemLayout.labelCol"
+          :wrapper-col="formItemLayout.wrapperCol"
+        >
+          <a-input v-model="form.pathToReplace2" placeholder="请输入工程路径将被替换的字符串" />
+        </a-form-model-item>
+        <a-form-model-item
+          label="替换后工程路径子串(2)"
+          prop="pathReplaced"
+          :label-col="formItemLayout.labelCol"
+          :wrapper-col="formItemLayout.wrapperCol"
+        >
+          <a-input v-model="form.pathReplaced2" placeholder="请输入工程路径替换后的字符串" />
+        </a-form-model-item>
+        <!-- 包名替换  -->
+        <a-form-model-item
+          label="原包名子串"
+          prop="packageInfoToReplace"
+          :label-col="formItemLayout.labelCol"
+          :wrapper-col="formItemLayout.wrapperCol"
+        >
+          <a-input v-model="form.packageInfoToReplace" placeholder="请输入包名将被替换的字符串" />
+        </a-form-model-item>
+        <a-form-model-item
+          label="替换后包名子串"
+          prop="packageInfoReplaced"
+          :label-col="formItemLayout.labelCol"
+          :wrapper-col="formItemLayout.wrapperCol"
+        >
+          <a-input v-model="form.packageInfoReplaced" placeholder="请输入包名替换后的字符串" />
+        </a-form-model-item>
       </a-form-model>
     </div>
     <template slot="footer">
@@ -216,6 +268,12 @@ export default {
         name: null,
         description: null,
         remark: null,
+        pathToReplace1: null,
+        pathReplaced1: null,
+        pathToReplace2: null,
+        pathReplaced2: null,
+        packageInfoToReplace: null,
+        packageInfoReplaced: null,
         gmtCreated: null,
         creator: null,
         creatorTenantId: null,
@@ -240,6 +298,10 @@ export default {
         name: null,
         description: null,
         remark: null,
+        pathToReplace: null,
+        pathReplaced: null,
+        packageInfoToReplace: null,
+        packageInfoReplaced: null,
         gmtCreated: null,
         creator: null,
         creatorTenantId: null,
