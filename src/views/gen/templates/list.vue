@@ -96,6 +96,11 @@
         :initvalue="initvalue"
         @refresh="refresh"
       />
+      <Copy
+        ref="Copy"
+        :initvalue="initGroupValue"
+        @refresh="refresh"
+      />
     </a-col>
   </a-row>
 </template>
@@ -106,6 +111,7 @@ import { STable, Ellipsis } from '@/components'
 import { message } from 'ant-design-vue'
 import AddOrEditForm from '@/views/gen/templates/addOrEditForm'
 import InfoTable from '@/views/gen/templates/infoTable'
+import Copy from '@/views/gen/templates/copy'
 import moment from 'moment'
 
 message.config({
@@ -124,11 +130,34 @@ export default {
     InfoTable,
     STable,
     Ellipsis,
-    AddOrEditForm
+    AddOrEditForm,
+    Copy
   },
   methods: {
     onContextMenuClick (treeKey, menuKey) {
       console.log(`treeKey: ${treeKey}, menuKey: ${menuKey}`)
+      if (menuKey == 1) {
+        this.commonRequest.head.operationTime = Date.now()
+        this.bodyById.id = treeKey
+        this.commonRequest.body = this.bodyById
+        const commonRequest = this.commonRequest
+        request({
+          url: '/templatesGroup/getById',
+          method: 'post',
+          dataType: 'json',
+          data: commonRequest
+        }).then(res => {
+          if (res.head.status === 'S') {
+            this.initGroupValue = res.body
+            this.initGroupValue.name = this.initGroupValue.name + '-copy'
+            this.$refs.Copy.show()
+          } else {
+            message.error(res.head.msg)
+          }
+        }).catch((err) => {
+          console.log(err)
+        })
+      }
     },
     handleReset () {
       this.queryParam = {}
@@ -271,6 +300,7 @@ export default {
     this.columns = columns
     return {
       initvalue: {},
+      initGroupValue: {},
       // create model
       visible: false,
       confirmLoading: false,
