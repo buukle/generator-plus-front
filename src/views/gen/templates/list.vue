@@ -1,6 +1,6 @@
 <template>
   <a-row style="background-color: white" type="flex">
-    <a-col :span="3" style="padding-top: 10px;padding-left: 10px">
+    <a-col :span="3" style="padding-top: 10px;padding-left: 10px ;width: 200px">
       <a-tree
         :tree-data="templatesGroupTree"
         :show-line="true"
@@ -20,8 +20,11 @@
           </a-dropdown>
         </template>
       </a-tree>
+      <span style="color: rgb(169 150 150);font-size: 12px;">ps : </span>
+      <br/>
+      <span style="color: rgb(169 150 150);font-size: 12px;">① 支持 右键 -> 复制分组 哦~</span>
     </a-col>
-    <a-col :span="21"style="padding-top: 10px;padding-left: 10px">
+    <a-col :span="21" style="padding-top: 10px;padding-left: 10px">
       <div class="table-page-search-wrapper">
         <a-form layout="inline">
           <a-row :gutter="48">
