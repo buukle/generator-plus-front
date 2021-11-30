@@ -118,7 +118,7 @@ export default {
       const commonRequest = this.commonRequest
       this.$confirm({
         title: '确认提示',
-        content: `是否删除该条记录？`,
+        content: `是否删除该条记录？注意 : 删除该分组将同步删除该分组下所有的模板!`,
         okType: 'danger',
         okText: '确认',
         cancelText: '取消',

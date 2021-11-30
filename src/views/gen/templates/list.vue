@@ -1,9 +1,10 @@
 <template>
   <a-row style="background-color: white" type="flex">
-    <a-col :span="3" style="padding-top: 10px;padding-left: 10px ;width: 200px">
+    <a-col :span="6" style="padding-top: 10px;padding-left: 10px ;width: 300px;overflow-y: auto;">
       <a-tree
         :tree-data="templatesGroupTree"
         :show-line="true"
+        :defaultExpandAll="true"
         @expand="onExpand"
         @select="onSelect"
         :selectedKeys="selectedKeys"
@@ -14,7 +15,6 @@
             <template #overlay>
               <a-menu @click="({ key: menuKey }) => onContextMenuClick(treeKey, menuKey)">
                 <a-menu-item key="1">复制分组(带模板)</a-menu-item>
-                <a-menu-item key="2">查看分组变量</a-menu-item>
               </a-menu>
             </template>
           </a-dropdown>
@@ -24,7 +24,7 @@
       <br/>
       <span style="color: rgb(169 150 150);font-size: 12px;">① 支持 右键 -> 复制分组 哦~</span>
     </a-col>
-    <a-col :span="21" style="padding-top: 10px;padding-left: 10px">
+    <a-col :span="18" style="padding-top: 10px;padding-left: 10px">
       <div class="table-page-search-wrapper">
         <a-form layout="inline">
           <a-row :gutter="48">
@@ -201,6 +201,7 @@ export default {
     },
     refresh () {
       this.$refs.table.refresh(true)
+      this.getTemplatesGroupTree()
     },
     handleSearch () {
       this.$refs.table.pagination.pageNo = 1
@@ -363,12 +364,18 @@ export default {
 const columns = [
   {
      title: '序号',
-    width: '5%',
+    width: '10%',
     scopedSlots: { customRender: 'serial' }
   },
   {
+    title: '分组名称',
+    width: '15%',
+    dataIndex: 'templatesGroupName',
+    needTotal: true
+  },
+  {
     title: '模板名称',
-    width: '35%',
+    width: '15%',
     dataIndex: 'name',
     scopedSlots: { customRender: 'name' },
     needTotal: true
@@ -382,7 +389,7 @@ const columns = [
   {
     title: '创建者',
     dataIndex: 'creator',
-    width: '10%'
+    width: '15%'
   },
   {
     title: '状态',
@@ -393,7 +400,7 @@ const columns = [
   {
     title: '操作',
     dataIndex: 'action',
-    width: '20%',
+    width: '15%',
     scopedSlots: { customRender: 'action' }
   }
 ]
