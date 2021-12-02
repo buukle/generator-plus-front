@@ -23,7 +23,7 @@ function getCookie (cname) {
 router.beforeEach((to, from, next) => {
   NProgress.start()
   to.meta && typeof to.meta.title !== 'undefined' && setDocumentTitle(`${i18nRender(to.meta.title)} - ${domTitle}`)
-  const authorization = getCookie('BK_AUTHCOOKIE')
+  const authorization = getCookie(process.env.VUE_APP_AUTHORIZATION_COOKIE_KEY)
   if (authorization) {
       if (store.getters.userInfo === null) {
         store.dispatch('GetInfo').then(res => {

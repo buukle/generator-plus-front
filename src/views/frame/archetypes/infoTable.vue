@@ -27,7 +27,9 @@
               <a-col :span="18" style="padding-left: 10px;">
                 <span> {{ (initvalue.url == '' || null) ? '空' : initvalue.url }} </span>
                 <div v-if="initvalue.url">
-                  <a :href="initvalue.url" target="_blank">点击下载</a>
+                  <template>
+                    <a href="javascript:(0)" @click="handleDown(initvalue.url)">资源导出</a>
+                  </template>
                 </div>
               </a-col>
             </a-col>
@@ -107,6 +109,31 @@ export default {
     },
     gmtDateFormat (text) {
       return moment(text).format('yyyy-MM-DD HH:mm:ss')
+    },
+    handleDown (url) {
+      const headers = {}
+      headers[process.env.VUE_APP_AUTHORIZATION_HEADER_KEY] = this.getCookie(process.env.VUE_APP_AUTHORIZATION_COOKIE_KEY)
+      fetch(url, {
+        method: 'GET',
+        headers: headers
+      }).then(res => res.blob()).then(data => {
+          const blobUrl = window.URL.createObjectURL(data)
+          const a = document.createElement('a')
+          a.href = blobUrl
+          a.click()
+        })
+    },
+    getCookie (cname) {
+      var name = cname + '='
+      var ca = document.cookie.split(';')
+      for (var i = 0; i < ca.length; i++) {
+        var c = ca[i]
+        while (c.charAt(0) == ' ') c = c.substring(1)
+        if (c.indexOf(name) != -1) {
+          return c.substring(name.length, c.length)
+        }
+      }
+      return ''
     }
   },
   props: {

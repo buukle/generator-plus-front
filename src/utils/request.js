@@ -45,9 +45,9 @@ function getCookie (cname) {
 }
 // request interceptor
 request.interceptors.request.use(config => {
-  const authorization = getCookie('BK_AUTHCOOKIE')
+  const authorization = getCookie(process.env.VUE_APP_AUTHORIZATION_COOKIE_KEY)
   if (authorization) {
-    config.headers['Authorization'] = authorization
+    config.headers[process.env.VUE_APP_AUTHORIZATION_HEADER_KEY] = authorization
   }
   return config
 }, errorHandler)

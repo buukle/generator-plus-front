@@ -1,73 +1,73 @@
 <template>
-    <a-card :bordered="false">
-      <div class="table-page-search-wrapper">
-        <a-form layout="inline">
-          <a-row :gutter="48">
-            <a-col :md="8" :sm="24">
-              <a-form-item label="日志名称">
-                <a-input v-model="queryParam.name" name="name" placeholder=""/>
-              </a-form-item>
-            </a-col>
-            <a-col :md="8" :sm="24">
-              <a-form-item label="状态">
-                <a-select v-model="queryParam.states" placeholder="请选择" default-value="0">
-                  <a-select-option value="">全部</a-select-option>
-                  <a-select-option value="1">创建完成</a-select-option>
-                  <a-select-option value="2">审批中</a-select-option>
-                  <a-select-option value="3">正常</a-select-option>
-                  <a-select-option value="4">执行中</a-select-option>
-                  <a-select-option value="5">执行失败</a-select-option>
-                  <a-select-option value="6">执行成功</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <template v-if="advanced">
-            </template>
-            <a-col :md="!advanced && 8 || 24" :sm="24">
+  <a-card :bordered="false">
+    <div class="table-page-search-wrapper">
+      <a-form layout="inline">
+        <a-row :gutter="48">
+          <a-col :md="8" :sm="24">
+            <a-form-item label="日志名称">
+              <a-input v-model="queryParam.name" name="name" placeholder=""/>
+            </a-form-item>
+          </a-col>
+          <a-col :md="8" :sm="24">
+            <a-form-item label="状态">
+              <a-select v-model="queryParam.states" placeholder="请选择" default-value="0">
+                <a-select-option value="">全部</a-select-option>
+                <a-select-option value="1">创建完成</a-select-option>
+                <a-select-option value="2">审批中</a-select-option>
+                <a-select-option value="3">正常</a-select-option>
+                <a-select-option value="4">执行中</a-select-option>
+                <a-select-option value="5">执行失败</a-select-option>
+                <a-select-option value="6">执行成功</a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+          <template v-if="advanced">
+          </template>
+          <a-col :md="!advanced && 8 || 24" :sm="24">
               <span class="table-page-search-submitButtons" :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
 <!--                <a-button type="primary" @click="handleAdd">新建</a-button>-->
                 <a-button style="margin-left: 8px" type="primary" @click="handleSearch()">查询</a-button>
                 <a-button style="margin-left: 8px" @click="() => this.queryParam = {}">重置</a-button>
               </span>
-            </a-col>
-          </a-row>
-        </a-form>
-      </div>
+          </a-col>
+        </a-row>
+      </a-form>
+    </div>
 
-      <s-table
-        ref="table"
-        size="default"
-        rowKey="id"
-        :columns="columns"
-        :data="loadData"
-        :alert="true"
-        :rowSelection="rowSelection"
-        :pagination="{ showTotal: total => `共 ${total} 条记录` }"
-      >
+    <s-table
+      ref="table"
+      size="default"
+      rowKey="id"
+      :columns="columns"
+      :data="loadData"
+      :alert="true"
+      :rowSelection="rowSelection"
+      :pagination="{ showTotal: total => `共 ${total} 条记录` }"
+    >
         <span slot="serial" slot-scope="text, record, index">
           {{ index + 1 }}
         </span>
-        <span slot="status" slot-scope="text">
+      <span slot="status" slot-scope="text">
           <a-badge :status="text | statusTypeFilter" :text="text | statusFilter" />
         </span>
-        <span slot="name" slot-scope="text">
+      <span slot="name" slot-scope="text">
           <ellipsis :length="16" tooltip>{{ text }}</ellipsis>
         </span>
-        <span slot="gmtCreated" slot-scope="text">
+      <span slot="gmtCreated" slot-scope="text">
           <ellipsis :length="64" tooltip>{{ gmtDateFormat(text) }}</ellipsis>
         </span>
-        <span slot="action" slot-scope="text, record">
+      <span slot="action" slot-scope="text, record">
           <template>
-            <a :href="record.zipDownUrl" download="code.zip">下载</a>
+            <a href="javascript:(0)"  @click="handleDownLoad(record)">资源导出</a>
           </template>
         </span>
-      </s-table>
-    </a-card>
+    </s-table>
+  </a-card>
 </template>
 
 <script>
 import { STable, Ellipsis } from '@/components'
- import request from '@/utils/request'
+import request from '@/utils/request'
 import { message } from 'ant-design-vue'
 import moment from 'moment'
 
@@ -107,6 +107,34 @@ export default {
     },
     gmtDateFormat (text) {
       return moment(text).format('yyyy-MM-DD HH:mm:ss')
+    },
+    handleDownLoad (record) {
+      const headers = {}
+      // headers.process.env.VUE_APP_AUTHORIZATION_HEADER_KEY = this.getCookie(process.env.VUE_APP_AUTHORIZATION_HEADER_KEY)
+      headers[process.env.VUE_APP_AUTHORIZATION_HEADER_KEY] = this.getCookie(process.env.VUE_APP_AUTHORIZATION_COOKIE_KEY)
+      fetch(record.zipDownUrl, {
+        method: 'GET',
+        headers: headers
+      })
+        .then(res => res.blob())
+        .then(data => {
+          const blobUrl = window.URL.createObjectURL(data)
+          const a = document.createElement('a')
+          a.href = blobUrl
+          a.click()
+        })
+    },
+    getCookie (cname) {
+      var name = cname + '='
+      var ca = document.cookie.split(';')
+      for (var i = 0; i < ca.length; i++) {
+        var c = ca[i]
+        while (c.charAt(0) == ' ') c = c.substring(1)
+        if (c.indexOf(name) != -1) {
+          return c.substring(name.length, c.length)
+        }
+      }
+      return ''
     }
   },
   data () {
@@ -158,7 +186,7 @@ export default {
       return statusMap[type].status
     }
   },
-   computed: {
+  computed: {
     rowSelection () {
       return {
         selectedRowKeys: this.selectedRowKeys,
@@ -169,7 +197,7 @@ export default {
 }
 const columns = [
   {
-     title: '序号',
+    title: '序号',
     width: '5%',
     scopedSlots: { customRender: 'serial' }
   },
