@@ -36,7 +36,6 @@ const assetsCDN = {
     '//cdn.jsdelivr.net/npm/axios@0.21.1/dist/axios.min.js'
   ]
 }
-
 // vue.config.js
 const vueConfig = {
   publicPath: process.env.PUBLIC_PATH,
@@ -101,12 +100,11 @@ const vueConfig = {
   },
 
   devServer: {
-    // development server port 8000
+    disableHostCheck: true,
     port: 8000,
-    // If you want to turn on the proxy, please remove the mockjs /src/main.jsL11
     proxy: {
       '/opensource/generator/plus': {
-        target: 'http://127.0.0.1:80',
+        target: 'http://generator-plus.buukle.top:80',
         ws: false,
         changeOrigin: true
       }

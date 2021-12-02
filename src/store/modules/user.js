@@ -1,7 +1,20 @@
 import storage from 'store'
-import { login, getInfo, logout } from '@/api/login'
+// import { login, getInfo, logout } from '@/api/login'
+import { login, logout } from '@/api/login'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
-import { welcome } from '@/utils/util'
+
+function getCookie (cname) {
+  var name = cname + '='
+  var ca = document.cookie.split(';')
+  for (var i = 0; i < ca.length; i++) {
+    var c = ca[i]
+    while (c.charAt(0) == ' ') c = c.substring(1)
+    if (c.indexOf(name) != -1) {
+      return c.substring(name.length, c.length)
+    }
+  }
+  return ''
+}
 
 const user = {
   state: {
@@ -46,15 +59,18 @@ const user = {
     // 获取用户信息
     GetInfo ({ commit }) {
       return new Promise((resolve, reject) => {
-        getInfo().then(response => {
-          const result = response.result
-          commit('SET_INFO', result)
-          commit('SET_NAME', { name: result.name, welcome: welcome() })
-          commit('SET_AVATAR', result.avatar)
-          resolve(response)
-        }).catch(error => {
-          reject(error)
-        })
+        const BK_USERNAME = getCookie('BK_USERNAME')
+        commit('SET_NAME', { name: BK_USERNAME })
+        resolve()
+        // getInfo().then(response => {
+        //   const result = response.result
+        //   commit('SET_INFO', result)
+        //   commit('SET_NAME', { name: result.name, welcome: welcome() })
+        //   commit('SET_AVATAR', result.avatar)
+        //   resolve(response)
+        // }).catch(error => {
+        //   reject(error)
+        // })
       })
     },
 

@@ -1,9 +1,6 @@
 import axios from 'axios'
-import store from '@/store'
-import storage from 'store'
 import notification from 'ant-design-vue/es/notification'
 import { VueAxios } from './axios'
-import { ACCESS_TOKEN } from '@/store/mutation-types'
 
 // 创建 axios 实例
 const request = axios.create({
@@ -16,8 +13,6 @@ const request = axios.create({
 const errorHandler = (error) => {
   if (error.response) {
     const data = error.response.data
-    // 从 localstorage 获取 token
-    const token = storage.get(ACCESS_TOKEN)
     if (error.response.status === 403) {
       notification.error({
         message: 'Forbidden',
@@ -25,35 +20,41 @@ const errorHandler = (error) => {
       })
     }
     if (error.response.status === 401 && !(data.result && data.result.isLogin)) {
+      console.log(error)
       notification.error({
         message: 'Unauthorized',
         description: 'Authorization verification failed'
       })
-      if (token) {
-        store.dispatch('Logout').then(() => {
-          setTimeout(() => {
-            window.location.reload()
-          }, 1500)
-        })
-      }
+      const href = process.env.VUE_APP_LOGIN_CUBE_URL + '?redirect_url=' + process.env.VUE_APP_REDIRECT_URL
+      // window.location.href = href
     }
   }
   return Promise.reject(error)
 }
-
+function getCookie (cname) {
+  var name = cname + '='
+  var ca = document.cookie.split(';')
+  for (var i = 0; i < ca.length; i++) {
+    var c = ca[i]
+    while (c.charAt(0) == ' ') c = c.substring(1)
+    if (c.indexOf(name) != -1) {
+      return c.substring(name.length, c.length)
+    }
+  }
+  return ''
+}
 // request interceptor
 request.interceptors.request.use(config => {
-  const token = storage.get(ACCESS_TOKEN)
-  // 如果 token 存在
-  // 让每个请求携带自定义 token 请根据实际情况自行修改
-  if (token) {
-    config.headers['Access-Token'] = token
+  const authorization = getCookie('BK_AUTHCOOKIE')
+  if (authorization) {
+    config.headers['Authorization'] = authorization
   }
   return config
 }, errorHandler)
 
 // response interceptor
 request.interceptors.response.use((response) => {
+  console.log(response)
   return response.data
 }, errorHandler)
 
