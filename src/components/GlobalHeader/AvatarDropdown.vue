@@ -54,12 +54,8 @@ export default {
         title: this.$t('layouts.usermenu.dialog.title'),
         content: this.$t('layouts.usermenu.dialog.content'),
         onOk: () => {
-          // return new Promise((resolve, reject) => {
-          //   setTimeout(Math.random() > 0.5 ? resolve : reject, 1500)
-          // }).catch(() => console.log('Oops errors!'))
-          return this.$store.dispatch('Logout').then(() => {
-            this.$router.push({ name: 'login' })
-          })
+          const href = process.env.VUE_APP_LOGIN_CUBE_URL + '?redirect_url=' + process.env.VUE_APP_REDIRECT_URL
+          window.location.href = href
         },
         onCancel () {}
       })
