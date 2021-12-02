@@ -61,6 +61,7 @@ const user = {
       return new Promise((resolve, reject) => {
         const BK_USERNAME = getCookie('BK_USERNAME')
         commit('SET_NAME', { name: BK_USERNAME })
+        commit('SET_INFO', { name: BK_USERNAME })
         resolve()
         // getInfo().then(response => {
         //   const result = response.result

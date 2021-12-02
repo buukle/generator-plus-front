@@ -21,32 +21,26 @@ function getCookie (cname) {
   return ''
 }
 router.beforeEach((to, from, next) => {
-  NProgress.start() // start progress bar
+  NProgress.start()
   to.meta && typeof to.meta.title !== 'undefined' && setDocumentTitle(`${i18nRender(to.meta.title)} - ${domTitle}`)
   const authorization = getCookie('BK_AUTHCOOKIE')
   if (authorization) {
-    if (store.getters.userInfo === null) {
-      store.dispatch('GetInfo').then(res => {
+      if (store.getters.userInfo === null) {
+        store.dispatch('GetInfo').then(res => {
           store.dispatch('GenerateRoutes').then(() => {
             router.addRoutes(store.getters.addRouters)
-            const redirect = decodeURIComponent(from.query.redirect || to.path)
-            if (to.path === redirect) {
-              next({ ...to, replace: true })
-            } else {
-              next({ path: redirect })
-            }
           })
-        })
-        .catch((e) => {
-          console.log(e)
-          notification.error({
-            message: '错误',
-            description: '请求用户信息失败，请重试'
+          next()
+        }).catch((e) => {
+            console.log(e)
+            notification.error({
+              message: '错误',
+              description: '请求用户信息失败，请重试'
+            })
           })
-        })
-    } else {
-      next()
-    }
+      } else {
+        next()
+      }
   } else {
     const href = process.env.VUE_APP_LOGIN_CUBE_URL + '?redirect_url=' + process.env.VUE_APP_REDIRECT_URL
     window.location.href = href

@@ -45,14 +45,13 @@ export default {
         'ant-pro-global-header-index-right': true,
         [`ant-pro-global-header-index-${(this.isMobile || !this.topMenu) ? 'light' : this.theme}`]: true
       }
+    },
+    userInfo () {
+      return this.$store.getters.userInfo
     }
   },
-  mounted () {
-    setTimeout(() => {
-      this.currentUser = {
-        name: 'admin'
-      }
-    }, 1500)
+  created () {
+    this.currentUser = this.userInfo
   }
 }
 </script>

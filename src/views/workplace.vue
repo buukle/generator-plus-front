@@ -7,7 +7,6 @@
         </div>
         <div class="content">
           <div class="content-title">
-<!--            {{ timeFix }}，{{ user.name }}<span class="welcome-text">，{{ welcome }}</span>-->
             <span class="welcome-text">{{ welcome }}</span>
           </div>
           <div>{{ user.name }} | 布壳儿 - buukle</div>
@@ -54,7 +53,7 @@ export default {
     }),
     currentUser () {
       return {
-        name: 'BUUKLE',
+        name: '',
         avatar: ''
       }
     },

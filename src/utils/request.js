@@ -26,7 +26,7 @@ const errorHandler = (error) => {
         description: 'Authorization verification failed'
       })
       const href = process.env.VUE_APP_LOGIN_CUBE_URL + '?redirect_url=' + process.env.VUE_APP_REDIRECT_URL
-      // window.location.href = href
+      window.location.href = href
     }
   }
   return Promise.reject(error)
