@@ -42,7 +42,7 @@ router.beforeEach((to, from, next) => {
         next()
       }
   } else {
-    const href = process.env.VUE_APP_LOGIN_CUBE_URL + '?redirect_url=' + process.env.VUE_APP_REDIRECT_URL
+    const href = process.env.VUE_APP_LOGIN_CUBE_FRONT_URL + '?redirect_url=' + process.env.VUE_APP_REDIRECT_URL
     window.location.href = href
   }
 })

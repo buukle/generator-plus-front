@@ -28,7 +28,8 @@
 </template>
 
 <script>
-import { Modal } from 'ant-design-vue'
+import { Modal, message } from 'ant-design-vue'
+import request from '@/utils/request'
 
 export default {
   name: 'AvatarDropdown',
@@ -54,8 +55,20 @@ export default {
         title: this.$t('layouts.usermenu.dialog.title'),
         content: this.$t('layouts.usermenu.dialog.content'),
         onOk: () => {
-          const href = process.env.VUE_APP_LOGIN_CUBE_URL + '?redirect_url=' + process.env.VUE_APP_REDIRECT_URL
-          window.location.href = href
+          request({
+            url: process.env.VUE_APP_LOGIN_CUBE_SERVER_URL + 'auth/logout',
+            method: 'get',
+            dataType: 'json'
+          }).then(res => {
+            if (res.head.status === 'S') {
+              const href = process.env.VUE_APP_LOGIN_CUBE_FRONT_URL + '?redirect_url=' + process.env.VUE_APP_REDIRECT_URL
+              window.location.href = href
+            } else {
+              message.error(res.head.msg)
+            }
+          }).catch((err) => {
+            console.log(err)
+          })
         },
         onCancel () {}
       })
