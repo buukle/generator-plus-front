@@ -217,7 +217,8 @@ export default {
       queryParam: {},
       commonRequest: {
         head: {
-          operationTime: Date.now()
+          operationTime: Date.now(),
+          appId: 'generator-plus'
         },
         body: {}
       },
